@@ -1,2 +1,0 @@
-"# Bisector-Analysis" 
-"# Bisector-Analysis" 
