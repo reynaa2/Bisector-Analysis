@@ -6,7 +6,7 @@ from astropy.io import fits
 import pylab as pl
 import matplotlib.lines as mlines
 
-# Function developed to find the index of values that lie within a given bin of the 2D Histogram
+# Function developed to find the index of values in the most populated bin of 2D histogram
 def find_index(x_val, y_val, x_range, y_range, x_ind, y_ind):
     xmin=x_range[x_ind]
     xmax=x_range[x_ind+1]
@@ -46,13 +46,12 @@ IDs = np.append(massID, np.append(MassID, DmassID))
 comb=np.append(massID,np.append(MassID, DmassID))
 MassIDs = np.append(comb,AmassID)
 
-print IDs 
 
 # All combined location IDs
 field = np.append(SBlocationID, np.append(DL_locationID, DL2_locationID))
 locationID = np.append(field, APlocationID)
 
-#For R min vs max x-range
+#For R min vs max x-range of binary and controlled samples
 outfile1=open('Combined Candidate Log Values.csv', 'w')
 xs = np.append(SBXmax ,np.append(DLXmax, DLXmax2))
 ys = np.append( SBR ,np.append(DLR, DLR2))
@@ -92,7 +91,7 @@ plt.ylabel('log(R min)')
 plt.title('Combined Candidates Binary and Non-Binary' )
 plt.savefig('Combined Cand. 2DHist for Log Values.jpg', bbox_inches='tight') 
 #--------------------------------------------------
-#For R min vs max x-range (for binaries only)
+#For R min vs max x-range (for binary sample only-2011)
 outfile=open('Binary Log Values.csv', 'w')
 x = np.append(SBXmax, np.append(DLXmax, DLXmax2))
 y = np.append(SBR, np.append(DLR,DLR2))
