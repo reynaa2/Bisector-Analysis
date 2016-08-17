@@ -6,7 +6,7 @@ from astropy.io import fits
 import pylab as pl
 import matplotlib.lines as mlines
 
-# Function developed to find the index of values in the most populated bin of 2D histogram
+# Function developed to find the index of values in the most populated bin of 2D histogram (Developed by Graham)
 def find_index(x_val, y_val, x_range, y_range, x_ind, y_ind):
     xmin=x_range[x_ind]
     xmax=x_range[x_ind+1]
@@ -74,11 +74,6 @@ t1 = arg%Grid1.shape[0]
 t2 = arg/Grid1.shape[0]
 found_ind=find_index(xmax, R, x_range, y_range, t2, t1)
 print("Graham's algorithm found {0} indicies".format(found_ind))
-#print(Grid1[t2][t1])
-#print(x_range[t2], x_range[t2 + 1], y_range[t1])
-#values1 = np.where(np.logical_and(x_range[t2+1] >= xmax, x_range[t2] <= xmax))[0]
-#values2 = np.where(np.logical_and(y_range[t1+1] >= R, y_range[t1] <= R))[0]
-#values3 = [val for val in values1 if val in values2]
 
 #Call the index of the function's generated value for found_ind
 print(MassIDs[found_ind])
