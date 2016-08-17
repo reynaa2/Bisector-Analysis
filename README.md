@@ -9,6 +9,7 @@ It is more often then not that CCFs of binary systems tend to possess merged pea
 These are the systems that are tricky to catch.
 
 In this repository are a few things:
+
 1) Code used to generate the bisector curves from the CCF calculated in another language
 
 2) Code used to generate teh slope, linear coefficients, of the bisector
