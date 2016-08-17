@@ -15,12 +15,13 @@ DrewsList_x=np.loadtxt('DrewsList_Bisector_pts.lis', skiprows=1, dtype=float, us
 DrewsList2_x=np.loadtxt('DrewsList2_Bisector_pts.lis', skiprows=1, dtype=float, usecols=[1,2,3])
 DR12_random_x=np.loadtxt('APOGEE_Random_Bisector_pts.lis',skiprows=1, dtype=float, usecols=[1,2,3] )
 
-MASSID=np.loadtxt('DrewsList_Bisector_pts.lis',dtype = 'str', usecols=[0])
-twoMASSID = MASSID[1:]
+twoMASSID=np.loadtxt('DrewsList_Bisector_pts.lis',skiprows=1,dtype = 'str', usecols=[0])
 print(len(twoMASSID))
 y = [0.1,0.3,0.5,0.7,0.9]
 y1 = [0.1,0.3,0.5]
 y2 = [0.1,0.3,0.5,0.7]
+
+print(SB_x)
 
 #Plotting bisectors of only three points
 plt.figure(figsize=(8,8))
@@ -48,3 +49,6 @@ for i in range(len(DrewsList_x)):
     outfile2.write(str(twoMASSID[i])+'\t'+str(slope[i][0])+'\n')
 
 outfile2.close()
+
+# Finding the slope differences from visit to visit
+
