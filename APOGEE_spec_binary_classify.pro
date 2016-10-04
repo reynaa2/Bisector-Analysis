@@ -56,7 +56,6 @@ FUNCTION CCF_HEIGHT , ccf, ccflag
   ccf_max = MAX(ccf)
   ccf_min = MIN(ccf)
   height = ccf_max - ccf_min
-  
  RETURN, height
  END
 ;---------------------
@@ -68,15 +67,12 @@ FUNCTION CCF_THRESHOLD, ccf, ccflag
   height = ccf_max - ccf_min
   ;Normalize the CCF in the y-direction so peak=1 and floor=0
   norm_ccf = (ccf - ccf_min)/(ccf_max-ccf_min)
-
   ;make finer grid via interpolation. Create grid size
   finer_grid = FINDGEN((max_lag-min_lag)*20.)/20. + min_lag
   finer_ccf = INTERPOL(norm_ccf, ccflag,finer_grid)
-  
   ;Find the ccf threshold
   ccf_median = MEDIAN(finer_ccf)
   threshold = 2.0 * ccf_median
-
 RETURN, threshold
 END
 ;----------------------
@@ -89,7 +85,6 @@ height = ccf_max-ccf_min
 ;print, 'Real CCF Max and Min: ', ccf_max, ' ' ,ccf_min
 ;find the boundaries that split the CCF into n_zones
 n_boundaries = 6
-
 ;This generates the horizontal slices to find the bisector pt for each region
 zone_boundaries = ccf_min+(height*FINDGEN(n_boundaries)/(n_boundaries - 1)) 
 ;print, 'Zone Boundaries: ', zone_boundaries ; This is calulating the proper incriments between 1 and 0.8
@@ -101,15 +96,10 @@ bisector_positions = FLTARR(2,n_boundaries-1)
 
 ;loop through the zones and measure the bisector of each 
 FOR i=0, n_boundaries - 2 DO BEGIN
-  
   ;save y position for this part of the bisector
   bisector_positions[1,i] = (zone_boundaries[i] + zone_boundaries[i+1]) / 2.   ;(This seems like this is the range for the x-value bisector not the y)
-  
   ;identify portion of CCF in between boundaries
   in_boundaries = WHERE(ccf GE zone_boundaries[i] AND ccf LE zone_boundaries[i+1], n_in_boundaries)
-  ;PRINT, 'In-boundaries value: ', in_boundaries
-
- 
                                 ;find the mean x position between
                                 ;these boundaries, if it exists; if
                                 ;not, save -9999. to indicate that
@@ -130,19 +120,15 @@ FUNCTION measure_APOGEE_CCF_bisector, CCF, ccflag
   LOADCT, 0, /SILENT
   ;PLOT, ccflag, ccf, PSYM =10
 ;Mid point of ccf lies on (0,0)
-
   ;find the horizontal range of the CCF
   max_lag = MAX(ccflag)
   min_lag = MIN(ccflag)
-  
   ;find the vertical range of the CCF
   ccf_max = MAX(ccf)
  ; print, 'ccf max for vertical range: ', max_lag
   ccf_min = MIN(ccf)
-  
 ;Actual height before normalizing ccf
   height = ccf_max - ccf_min
-  
   ;normalize the CCF vertically so that peak = 1 and floor = 0
   norm_ccf = (ccf - ccf_min)/(ccf_max - ccf_min)
 
@@ -150,10 +136,8 @@ FUNCTION measure_APOGEE_CCF_bisector, CCF, ccflag
   ;that we are less susceptible to
   ;sampling effects.
   finer_grid = FINDGEN((max_lag-min_lag)*20)/20.+min_lag
-
   ;interpolate the CCF onto this finer grid
   finer_ccf = INTERPOL(norm_ccf, ccflag, finer_grid)
- 
   ;find the CCF's base level
   ccf_median = MEDIAN(finer_ccf)
   truncate = 0.0
@@ -161,9 +145,7 @@ FUNCTION measure_APOGEE_CCF_bisector, CCF, ccflag
   ;Test the bisector calculation without the threshold:
   to_analyze = WHERE(finer_ccf GT truncate, n_analyze)
   IF n_analyze GT 3 THEN BEGIN
-    
-     ; bisector = MEASURE_BISECTOR(finer_grid[to_analyze], finer_ccf[to_analyze])
-  ;  ;Array that extracts the endpoints to match the total number of visits provided
+      ;Array that extracts the endpoints to match the total number of visits provided
       bisector = MEASURE_BISECTOR(finer_grid[to_analyze-2], finer_ccf[to_analyze-2])
   ;wait = GET_KBRD(1)
 
@@ -178,24 +160,20 @@ FUNCTION measure_APOGEE_CCF_bisector, CCF, ccflag
   plot1 = PLOT(finer_grid, finer_ccf, XRANGE = [min_lag_to_analyze-0.1*zoom_range, max_lag_to_analyze+0.1*zoom_range],LINESTYLE=0,/buffer)
   
   LOADCT, 13, /SILENT
-  ;plot2 = PLOT([-250,250], [ccf_median, ccf_median], /overplot,LINESTYLE=2,/buffer)
-  ;plot3 = PLOT([-250,250], [ccf_median, ccf_median],/overplot, COLOR = 80,/buffer )
+;The vertical chunks defined as y = [0.1,0.3,0.5,0.7,0.9]
   plot5 = PLOT([-250,250],[0.1,0.1], /overplot, LINESTYLE=2,/buffer)
   plot6 = PLOT([-250,250],[0.3,0.3], /overplot, LINESTYLE=2, /buffer)
   plot7 = PLOT([-250,250], [0.5,0.5], /overplot, LINESTYLE=2,/buffer)
   plot8 = PLOT([-250,250], [0.7,0.7], /overplot, LINESTYLE=2,/buffer)
   plot9 = PLOT([-250,250], [0.9,0.9], /overplot, LINESTYLE=2,/buffer)
 
- ;Double check bisector y values to makes sure they lie in the appropriate range for each zone (why isn't the math working accordingly?)
-  ;OPLOT, bisector[0,*], bisector[1,*], COLOR = 160 ; <- Plotting the Bisector
+ ;Plotting the Bisector on top of the vertical slices given above
   plot_bisector = PLOT(bisector[0,*], bisector[1,*],/overplot, 'b', XTITLE = 'CCF Lag', YTITLE='$\wedge{CCF Units}$',/buffer)
   
  ; wait = GET_KBRD(1)
   ENDIF ELSE BEGIN
-
      bisector = FLTARR(2,5)
      bisector[*,*] = -9999.
-;
   ENDELSE
   RETURN, bisector
 END
@@ -238,30 +216,11 @@ FOR i=0L, n_visits - 1 DO BEGIN
   paramTofind = 'SFILE'+STRTRIM(STRING(i+1),2)
   visitID = SXPAR(binary.head, paramTofind)
   visit_ID = STRMID(visitID,11,14)
-
-; Location of the stats to be calculated such as:
-  ;Range of x values in the bisector (DONE)
-  ;Mean, median and dfference of the x values compared to the two in the bisector (DONE)
-  ;Median of Y values (DONE)
-  ;All the x and y positions and the number of data points used for each bisector pt (DONE)
-  ;(Number of points to make a bisector pt. -> 2
-  ;(all x and y positions of bisector is in bisector[0,*], (x-values) and  bisector[1,*] (y-values) 
-  ;Height of the peak (DONE)
-  ; R statistic (DONE)
-  ; Threshold stat (median for the y values) (DONE)
-  ;Width of the peak
-
-  ;Things to add later:
-  ; Slope and correaltion coeffienct to linear bisector -> Heliocentric RV to make Helio vs. RV slope 
-  ; Divide known binaries into well separated and merged peaks or single stars
-;----------
-
    ;send this CCF to our bisector measuring code
    bisectors[i,*,*] = measure_APOGEE_CCF_bisector(only_visit_ccfs[*,i], binary.rv.ccflag)
     
    x_positions = REFORM(bisectors[i,0,*])
    y_positions = bisectors[i,1,*]
- 
     x_median = MEDIAN(x_positions)
     y_median = MEDIAN(y_positions)
  
@@ -271,13 +230,10 @@ FOR i=0L, n_visits - 1 DO BEGIN
 
     ;Mean of x-values in the bisectors, this includes the beginning and end elements of the array.
     bisector_xmean = MEAN(bisectors[i,0,*])
-  
     ;Difference between x mean and x median
     diff_in_median_mean = x_median - bisector_xmean
-
     ;Calling the R function
     R_value =  MEASURE_R(only_visit_ccfs[*,i], binary.rv.ccflag, ccf_height)
-
     ;Finding the x-range for the bisectors
     bisector_x_range = max_x - min_x
     
@@ -306,13 +262,10 @@ FOR i=0L, n_visits - 1 DO BEGIN
 
    PRINTF,3, FORMAT = '(A10,3X,A20, 3X,F10.2 ,3X,F10.2, 3X,F10.2, 3X, F10.2,3X,F10.2,3X,F10.2)',STRTRIM(Field),STRTRIM(apogeeID), $
     x_positions[0],x_positions[1],x_positions[2] ,x_positions[3] ,x_positions[4], bisector_x_range
-
 ENDFOR
 
 PRINTF,2, FORMAT = '(A10,3X,A20,3X,F10.2,2X,I5 ,3X , F10.2, 2X,I5, 3X ,F10.2,3X,F10.2)' ,STRTRIM(field), STRTRIM(apogeeID), $
 STRTRIM(Rmin), STRTRIM(maxXR), MaxWidth, XR_average
-
-
 LOADCT, 0, /SILENT
 PLOT, [-9999.,-9999.],[0,1], XRANGE = [min_x, max_x], YRANGE = [0,1], /XSTY, /YSTY
 
@@ -322,7 +275,6 @@ FOR i=0, n_visits-1 DO BEGIN
    plot4 = PLOT(bisectors[i,0,*], bisectors[i,1,*], 'r', /overplot, XTITLE='CCF Lag', YTITLE='$\wedge{CCF Units}$', $
    TITLE='APOGEE ID:' + STRTRIM(string(field)) +'/'+ STRTRIM(string(apogeeID)) $
      +'   ' + 'Visit:'+STRTRIM(string(i)),/buffer)
-
 ENDFOR
 plot4.save, '/Volumes/CoveyData/APOGEE_Spectra/APOGEE2_DR13/Bisector/DR13_CCF_Bisector_Plots/' + apogeeID+'.png'
 ;wait = GET_KBRD(1)
@@ -353,10 +305,8 @@ CLOSE,2
  FORMAT ='(A12,A20,A13,A13,A13,A13,A13,A13)'
     
 FOR i=0L, n_spectra-1 DO BEGIN
-   IF field[i] NE 1 THEN APOGEE_SPEC_BINARY_CLASSIFY, path[i], twoMASSID[i], field[i]
-   
+   IF field[i] NE 1 THEN APOGEE_SPEC_BINARY_CLASSIFY, path[i], twoMASSID[i], field[i]  
 ENDFOR
-
 CLOSE,1
 CLOSE,2
 CLOSE,3
